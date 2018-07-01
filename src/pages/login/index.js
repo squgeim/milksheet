@@ -1,12 +1,17 @@
 import React from 'react';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import Logo from '../../components/Logo';
 
 import * as formUtil from '../../utils/form';
+
+import * as loginThunks from '../../thunks/loginThunks';
 
 const styles = theme => ({
   box: {
@@ -24,7 +29,10 @@ const styles = theme => ({
     flexDirection: 'column',
   },
   padding: {
+    display: 'flex',
     padding: theme.spacing.unit,
+    alignItems: 'center',
+    flexDirection: 'column',
   },
   loginOr: {
     color: theme.palette.grey[500],
@@ -68,22 +76,24 @@ class Login extends React.Component {
     this.isFormValid = loginForm.isFormValid;
     this.handleChange = loginForm.handleChange;
     this.formUnfocused = loginForm.handleBlur;
+    this.getFieldValue = loginForm.getFieldValue;
   }
 
   login = e => {
     e.preventDefault();
 
     if (!this.isFormValid()) {
-      alert('invalid form!');
-    } else {
-      alert('Good to go!');
+      return;
     }
 
-    console.log(this.state.loginForm);
+    const email = this.getFieldValue('email');
+    const password = this.getFieldValue('password');
+
+    this.props.login({ email, password });
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, isLoggingIn } = this.props;
     const { loginForm } = this.state;
 
     return (
@@ -102,6 +112,7 @@ class Login extends React.Component {
                 onChange={this.handleChange}
                 onBlur={this.formUnfocused}
                 tabIndex={1}
+                disabled={isLoggingIn}
                 {...loginForm.email}
               />
             </div>
@@ -114,25 +125,33 @@ class Login extends React.Component {
                 onChange={this.handleChange}
                 onBlur={this.formUnfocused}
                 tabIndex={2}
+                disabled={isLoggingIn}
                 {...loginForm.password}
               />
             </div>
-            <div className={classes.padding}>
-              <Button
-                type="submit"
-                variant="raised"
-                color="primary"
-                fullWidth={true}
-                onClick={this.login}
-                tabIndex={3}
-              >
-                Login
-              </Button>
-              <div className={classes.loginOr}>&mdash; or &mdash;</div>
-              <Button variant="flat" fullWidth={true} tabIndex={4}>
-                Sign Up
-              </Button>
-            </div>
+            {isLoggingIn || (
+              <div className={classes.padding}>
+                <Button
+                  type="submit"
+                  variant="raised"
+                  color="primary"
+                  fullWidth={true}
+                  onClick={this.login}
+                  tabIndex={3}
+                >
+                  Login
+                </Button>
+                <div className={classes.loginOr}>&mdash; or &mdash;</div>
+                <Button variant="flat" fullWidth={true} tabIndex={4}>
+                  Sign Up
+                </Button>
+              </div>
+            )}
+            {isLoggingIn && (
+              <div className={classes.padding}>
+                <CircularProgress />
+              </div>
+            )}
           </div>
         </form>
       </Paper>
@@ -140,4 +159,16 @@ class Login extends React.Component {
   }
 }
 
-export default withStyles(styles)(Login);
+export default compose(
+  connect(
+    state => ({
+      isLoggingIn: state.login.isLoggingIn,
+    }),
+    dispatch => ({
+      login({ email, password }) {
+        dispatch(loginThunks.loginUser({ email, password }));
+      },
+    })
+  ),
+  withStyles(styles)
+)(Login);

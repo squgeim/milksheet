@@ -65,6 +65,7 @@ export function createForm(self: Component, formName: string, fields: Field[]) {
   const isFormValid = createIsFormValid(self, formName, validateForm);
   const handleChange = createHandleChange(self, formName, validateForm);
   const handleBlur = createHandleBlur(self, formName, validateForm);
+  const getFieldValue = createGetFieldValue(self, formName);
 
   return Object.freeze({
     formName,
@@ -72,6 +73,7 @@ export function createForm(self: Component, formName: string, fields: Field[]) {
     validateForm,
     handleChange,
     handleBlur,
+    getFieldValue,
   });
 }
 
@@ -165,5 +167,13 @@ function createHandleBlur(
     const target = e.target;
 
     validateForm(target.id, target.value);
+  };
+}
+
+function createGetFieldValue(self: Component, formName: string) {
+  return function _getFieldValue(fieldName: string) {
+    const field = self.state[formName][fieldName];
+
+    return field.value;
   };
 }
