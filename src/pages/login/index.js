@@ -9,7 +9,7 @@ import Logo from '../../components/Logo';
 const styles = theme => ({
   box: {
     width: 350,
-    marginTop: 50,
+    marginTop: '5%',
     marginLeft: 'auto',
     marginRight: 'auto',
   },
@@ -34,41 +34,158 @@ const styles = theme => ({
 });
 
 class Login extends React.Component {
+  state = {
+    loginForm: {
+      email: {
+        value: '',
+        error: false,
+        helperText: '',
+      },
+      password: {
+        value: '',
+        error: false,
+        helperText: '',
+      },
+    },
+  };
+
+  validator = {
+    email: value => {
+      if (!value) {
+        return 'Email is required';
+      }
+
+      if (!/\w+@\w+\.\w+/.test(value)) {
+        return 'Invalid email address';
+      }
+    },
+    password: value => {
+      if (!value) {
+        return 'Password is required';
+      }
+    },
+  };
+
+  isFormValid = () => {
+    const { loginForm } = this.state;
+
+    return (
+      Object.entries(loginForm).filter(
+        ([key, value]) => this.validate(key, value.value) === true
+      ).length === 0
+    );
+  };
+
+  validate = (id, value) => {
+    const validationFn = this.validator[id];
+
+    if (typeof validationFn !== 'function') {
+      return false;
+    }
+
+    const validation = validationFn(value);
+
+    this.setState(prevState => ({
+      loginForm: {
+        ...prevState.loginForm,
+        [id]: {
+          ...prevState.loginForm[id],
+          error: !!validation,
+          helperText: validation || '',
+        },
+      },
+    }));
+
+    return !!validation;
+  };
+
+  handleChange = e => {
+    const target = e.target;
+
+    this.setState(prevState => ({
+      loginForm: {
+        ...prevState.loginForm,
+        [target.id]: {
+          ...prevState.loginForm[target.id],
+          value: target.value,
+        },
+      },
+    }));
+
+    if (this.state.loginForm[target.id].error) {
+      this.validate(target.id, target.value);
+    }
+  };
+
+  formUnfocused = e => {
+    const target = e.target;
+
+    this.validate(target.id, target.value);
+  };
+
+  login = e => {
+    e.preventDefault();
+
+    if (!this.isFormValid()) {
+      alert('invalid form!');
+    }
+
+    console.log(this.state.loginForm);
+  };
+
   render() {
     const { classes } = this.props;
+    const { loginForm } = this.state;
 
     return (
       <Paper className={classes.box}>
         <div>
           <Logo className={classes.logo} />
         </div>
-        <div className={classes.formContainer}>
-          <div className={classes.padding}>
-            <TextField
-              autoFocus={true}
-              id="email"
-              label="Email"
-              fullWidth={true}
-            />
+        <form onSubmit={this.login}>
+          <div className={classes.formContainer}>
+            <div className={classes.padding}>
+              <TextField
+                autoFocus={true}
+                id="email"
+                label="Email"
+                fullWidth={true}
+                onChange={this.handleChange}
+                onBlur={this.formUnfocused}
+                tabIndex={1}
+                {...loginForm.email}
+              />
+            </div>
+            <div className={classes.padding}>
+              <TextField
+                id="password"
+                label="Password"
+                type="password"
+                fullWidth={true}
+                onChange={this.handleChange}
+                onBlur={this.formUnfocused}
+                tabIndex={2}
+                {...loginForm.password}
+              />
+            </div>
+            <div className={classes.padding}>
+              <Button
+                type="submit"
+                variant="raised"
+                color="primary"
+                fullWidth={true}
+                onClick={this.login}
+                tabIndex={3}
+              >
+                Login
+              </Button>
+              <div className={classes.loginOr}>&mdash; or &mdash;</div>
+              <Button variant="flat" fullWidth={true} tabIndex={4}>
+                Sign Up
+              </Button>
+            </div>
           </div>
-          <div className={classes.padding}>
-            <TextField
-              id="password"
-              label="Password"
-              type="password"
-              fullWidth={true}
-            />
-          </div>
-          <div className={classes.padding}>
-            <Button variant="raised" color="primary" fullWidth={true}>
-              Login
-            </Button>
-            <div className={classes.loginOr}>&mdash; or &mdash;</div>
-            <Button variant="flat" fullWidth={true}>
-              Sign Up
-            </Button>
-          </div>
-        </div>
+        </form>
       </Paper>
     );
   }
