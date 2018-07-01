@@ -40,29 +40,30 @@ class Login extends React.Component {
     super();
 
     const formName = 'loginForm';
-    const validator = {
-      email: value => {
-        if (!value) {
-          return 'Email is required';
-        }
+    const formFields = [
+      {
+        name: 'email',
+        validator: value => {
+          if (!value) {
+            return 'Email is required';
+          }
 
-        if (!/\w+@\w+\.\w+/.test(value)) {
-          return 'Invalid email address';
-        }
+          if (!/\w+@\w+\.\w+/.test(value)) {
+            return 'Invalid email address';
+          }
+        },
       },
-      password: value => {
-        if (!value) {
-          return 'Password is required';
-        }
+      {
+        name: 'password',
+        validator: value => {
+          if (!value) {
+            return 'Password is required';
+          }
+        },
       },
-    };
+    ];
 
-    const loginForm = formUtil.createForm(
-      this,
-      formName,
-      ['email', 'password'],
-      validator
-    );
+    const loginForm = formUtil.createForm(this, formName, formFields);
 
     this.isFormValid = loginForm.isFormValid;
     this.handleChange = loginForm.handleChange;
@@ -74,6 +75,8 @@ class Login extends React.Component {
 
     if (!this.isFormValid()) {
       alert('invalid form!');
+    } else {
+      alert('Good to go!');
     }
 
     console.log(this.state.loginForm);

@@ -1,22 +1,35 @@
-export function createForm(self, formName, fields, validationSchema) {
+export function createForm(self, formName, fields) {
   if (!self.state) {
     self.state = {};
   }
 
-  self.state[formName] = fields.reduce((acc, fieldName) => {
-    acc[fieldName] = {
+  const form = {};
+  const validationSchema = {};
+
+  fields.forEach(field => {
+    const fieldName = typeof field === 'string' ? field : (field || {}).name;
+
+    if (typeof fieldName !== 'string') {
+      throw new Error('Invalid form fields');
+    }
+
+    form[fieldName] = {
       value: '',
       error: false,
       helperText: '',
     };
 
-    return acc;
-  }, {});
+    if (typeof field.validator === 'function') {
+      validationSchema[fieldName] = field.validator;
+    }
+  });
 
-  const validateForm = getValidateFormFn(self, formName, validationSchema);
-  const isFormValid = getIsFormValidFn(self, formName, validateForm);
-  const handleChange = getHandleChangeFn(self, formName, validateForm);
-  const handleBlur = getHandleBlurFn(self, formName, validateForm);
+  self.state[formName] = form;
+
+  const validateForm = createValidateForm(self, formName, validationSchema);
+  const isFormValid = createIsFormValid(self, formName, validateForm);
+  const handleChange = createHandleChange(self, formName, validateForm);
+  const handleBlur = createHandleBlur(self, formName, validateForm);
 
   return Object.freeze({
     formName,
@@ -27,17 +40,19 @@ export function createForm(self, formName, fields, validationSchema) {
   });
 }
 
-function getIsFormValidFn(self, formName, validateForm) {
+function createIsFormValid(self, formName, validateForm) {
   return function _isFormValid() {
     const form = self.state[formName];
 
-    return Object.entries(form).filter(
-      ([key, value]) => validateForm(key, value.value) === true
+    return (
+      Object.entries(form).filter(
+        ([key, value]) => validateForm(key, value.value) === true
+      ).length === 0
     );
   };
 }
 
-function getValidateFormFn(self, formName, validator) {
+function createValidateForm(self, formName, validator) {
   return function _validateForm(id, value) {
     if (!validator && !self.validator) {
       console.warn(
@@ -70,7 +85,7 @@ function getValidateFormFn(self, formName, validator) {
   };
 }
 
-function getHandleChangeFn(self, formName, validateForm) {
+function createHandleChange(self, formName, validateForm) {
   return function _handleChange(e) {
     const target = e.target;
 
@@ -90,7 +105,7 @@ function getHandleChangeFn(self, formName, validateForm) {
   };
 }
 
-function getHandleBlurFn(self, formName, validateForm) {
+function createHandleBlur(self, formName, validateForm) {
   return function _handleBlur(e) {
     const target = e.target;
 
