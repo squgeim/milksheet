@@ -1,10 +1,43 @@
-export function createForm(self, formName, fields) {
+// @flow
+
+type Validator = (value: string) => string | boolean;
+
+type ValidationSchema =
+  | {
+      [key: string]: Validator,
+    }
+  | {};
+
+interface Component {
+  state: Object;
+  setState(callback: (prevState: Object) => Object): void;
+  validator?: ValidationSchema;
+}
+
+type Field = {
+  name: string,
+  validator: Validator,
+};
+
+type FieldState = {
+  value: string,
+  error: boolean,
+  helperText: string,
+};
+
+type ValidateForm = (id: string, value: string) => boolean;
+
+type FieldEvent = {
+  target: { id: string, value: string },
+};
+
+export function createForm(self: Component, formName: string, fields: Field[]) {
   if (!self.state) {
     self.state = {};
   }
 
   const form = {};
-  const validationSchema = {};
+  const validationSchema: ValidationSchema = {};
 
   fields.forEach(field => {
     const fieldName = typeof field === 'string' ? field : (field || {}).name;
@@ -13,11 +46,13 @@ export function createForm(self, formName, fields) {
       throw new Error('Invalid form fields');
     }
 
-    form[fieldName] = {
+    const fieldState: FieldState = {
       value: '',
       error: false,
       helperText: '',
     };
+
+    form[fieldName] = fieldState;
 
     if (typeof field.validator === 'function') {
       validationSchema[fieldName] = field.validator;
@@ -40,20 +75,32 @@ export function createForm(self, formName, fields) {
   });
 }
 
-function createIsFormValid(self, formName, validateForm) {
+function createIsFormValid(
+  self: Component,
+  formName: string,
+  validateForm: ValidateForm
+) {
   return function _isFormValid() {
-    const form = self.state[formName];
+    const form: { [key: string]: FieldState } = self.state[formName];
 
     return (
-      Object.entries(form).filter(
-        ([key, value]) => validateForm(key, value.value) === true
-      ).length === 0
+      Object.entries(form).filter(([key, value]) => {
+        if (!value || typeof value.value !== 'string') {
+          return false;
+        }
+
+        return validateForm(key, value.value) === true;
+      }).length === 0
     );
   };
 }
 
-function createValidateForm(self, formName, validator) {
-  return function _validateForm(id, value) {
+function createValidateForm(
+  self: Component,
+  formName: string,
+  validator: ValidationSchema
+) {
+  return function _validateForm(id: string, value: string): boolean {
     if (!validator && !self.validator) {
       console.warn(
         `I can't do any validation without the validator object in your class! :(`
@@ -62,7 +109,7 @@ function createValidateForm(self, formName, validator) {
       return false;
     }
 
-    const validationFn = (validator || self.validator)[id];
+    const validationFn = (validator || self.validator || {})[id];
 
     if (typeof validationFn !== 'function') {
       return false;
@@ -85,8 +132,12 @@ function createValidateForm(self, formName, validator) {
   };
 }
 
-function createHandleChange(self, formName, validateForm) {
-  return function _handleChange(e) {
+function createHandleChange(
+  self: Component,
+  formName: string,
+  validateForm: ValidateForm
+) {
+  return function _handleChange(e: FieldEvent) {
     const target = e.target;
 
     self.setState(prevState => ({
@@ -105,8 +156,12 @@ function createHandleChange(self, formName, validateForm) {
   };
 }
 
-function createHandleBlur(self, formName, validateForm) {
-  return function _handleBlur(e) {
+function createHandleBlur(
+  self: Component,
+  formName: string,
+  validateForm: ValidateForm
+) {
+  return function _handleBlur(e: FieldEvent) {
     const target = e.target;
 
     validateForm(target.id, target.value);
