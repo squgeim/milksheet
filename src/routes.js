@@ -8,14 +8,12 @@ import Login from './pages/login';
 
 export const history = createBrowserRouter();
 
-function Routes() {
-  return (
-    <Router history={history}>
-      <Switch>
-        <Route path={ROUTES.LOGIN} component={Login} />
-      </Switch>
-    </Router>
-  );
-}
+const Routes = () => (
+  <Router history={history}>
+    <Switch>
+      <Route path={ROUTES.LOGIN} component={Login} />
+    </Switch>
+  </Router>
+);
 
 export default Routes;
