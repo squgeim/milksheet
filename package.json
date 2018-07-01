@@ -1,9 +1,26 @@
 {
   "name": "milksheet",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A tool to help rular milk collection centers better manage their operation.",
   "main": "src/index.js",
   "repository": "git@github.com:squgeim/milksheet.git",
   "author": "squgeim <shreyadahal@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@material-ui/core": "^1.3.0",
+    "@material-ui/icons": "^1.1.0",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-redux": "^5.0.7",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "1.1.4",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.3.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
 }
