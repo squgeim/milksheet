@@ -8,6 +8,7 @@ const styles = theme => ({
     fontWeight: 100,
     color: 'darkblue',
     textShadow: 'skyblue 0px 2px',
+    cursor: 'default',
   },
 });
 

@@ -5,3 +5,11 @@ export function setIsLoggingIn(state) {
     payload: { state },
   };
 }
+
+export const LOGIN_FAILED = 'LOGIN_FAILED';
+export function loginFailed(err) {
+  return {
+    type: LOGIN_FAILED,
+    error: err,
+  };
+}

@@ -142,7 +142,7 @@ class Login extends React.Component {
                   Login
                 </Button>
                 <div className={classes.loginOr}>&mdash; or &mdash;</div>
-                <Button variant="flat" fullWidth={true} tabIndex={4}>
+                <Button variant="outlined" fullWidth={true} tabIndex={4}>
                   Sign Up
                 </Button>
               </div>

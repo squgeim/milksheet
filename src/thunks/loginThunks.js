@@ -1,15 +1,17 @@
 import * as loginActions from '../actions/loginActions';
+import * as userActions from '../actions/userActions';
 
 export function loginUser({ email, password }) {
-  return function _loginThunk(dispatch) {
+  return async function _loginThunk(dispatch, getState, { loginService }) {
     dispatch(loginActions.setIsLoggingIn(true));
 
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        dispatch(loginActions.setIsLoggingIn(false));
+    try {
+      const user = await loginService.login(email, password);
+      dispatch(userActions.storeUser(user));
+    } catch (err) {
+      dispatch(loginActions.loginFailed(err));
+    }
 
-        resolve(true);
-      }, 5000);
-    });
+    dispatch(loginActions.setIsLoggingIn(false));
   };
 }
