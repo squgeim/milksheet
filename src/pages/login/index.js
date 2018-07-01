@@ -6,6 +6,8 @@ import TextField from '@material-ui/core/TextField';
 
 import Logo from '../../components/Logo';
 
+import * as formUtil from '../../utils/form';
+
 const styles = theme => ({
   box: {
     width: 350,
@@ -34,94 +36,38 @@ const styles = theme => ({
 });
 
 class Login extends React.Component {
-  state = {
-    loginForm: {
-      email: {
-        value: '',
-        error: false,
-        helperText: '',
+  constructor() {
+    super();
+
+    const formName = 'loginForm';
+    const validator = {
+      email: value => {
+        if (!value) {
+          return 'Email is required';
+        }
+
+        if (!/\w+@\w+\.\w+/.test(value)) {
+          return 'Invalid email address';
+        }
       },
-      password: {
-        value: '',
-        error: false,
-        helperText: '',
+      password: value => {
+        if (!value) {
+          return 'Password is required';
+        }
       },
-    },
-  };
+    };
 
-  validator = {
-    email: value => {
-      if (!value) {
-        return 'Email is required';
-      }
-
-      if (!/\w+@\w+\.\w+/.test(value)) {
-        return 'Invalid email address';
-      }
-    },
-    password: value => {
-      if (!value) {
-        return 'Password is required';
-      }
-    },
-  };
-
-  isFormValid = () => {
-    const { loginForm } = this.state;
-
-    return (
-      Object.entries(loginForm).filter(
-        ([key, value]) => this.validate(key, value.value) === true
-      ).length === 0
+    const loginForm = formUtil.createForm(
+      this,
+      formName,
+      ['email', 'password'],
+      validator
     );
-  };
 
-  validate = (id, value) => {
-    const validationFn = this.validator[id];
-
-    if (typeof validationFn !== 'function') {
-      return false;
-    }
-
-    const validation = validationFn(value);
-
-    this.setState(prevState => ({
-      loginForm: {
-        ...prevState.loginForm,
-        [id]: {
-          ...prevState.loginForm[id],
-          error: !!validation,
-          helperText: validation || '',
-        },
-      },
-    }));
-
-    return !!validation;
-  };
-
-  handleChange = e => {
-    const target = e.target;
-
-    this.setState(prevState => ({
-      loginForm: {
-        ...prevState.loginForm,
-        [target.id]: {
-          ...prevState.loginForm[target.id],
-          value: target.value,
-        },
-      },
-    }));
-
-    if (this.state.loginForm[target.id].error) {
-      this.validate(target.id, target.value);
-    }
-  };
-
-  formUnfocused = e => {
-    const target = e.target;
-
-    this.validate(target.id, target.value);
-  };
+    this.isFormValid = loginForm.isFormValid;
+    this.handleChange = loginForm.handleChange;
+    this.formUnfocused = loginForm.handleBlur;
+  }
 
   login = e => {
     e.preventDefault();
