@@ -1,0 +1,9 @@
+{
+  "name": "milksheet",
+  "version": "1.0.0",
+  "description": "A tool to help rular milk collection centers better manage their operation.",
+  "main": "src/index.js",
+  "repository": "git@github.com:squgeim/milksheet.git",
+  "author": "squgeim <shreyadahal@gmail.com>",
+  "license": "MIT"
+}
