@@ -10,6 +10,6 @@ export function login(email, password) {
           name: 'SKKChowk',
         },
       });
-    }, 5000);
+    }, 2000);
   });
 }
