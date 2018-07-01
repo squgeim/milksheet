@@ -5,6 +5,9 @@ import reducer from './reducers';
 
 const services = {};
 
-const store = createStore(reducer, applyMiddleware(thunk.withExtraArgument(services)));
+const store = createStore(
+  reducer,
+  applyMiddleware(thunk.withExtraArgument(services))
+);
 
 export default store;
