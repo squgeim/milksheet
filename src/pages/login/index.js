@@ -48,7 +48,7 @@ class Login extends React.Component {
             return 'Email is required';
           }
 
-          if (!/\w+@\w+\.\w+/.test(value)) {
+          if (!/\S+@\S+\.\S+/.test(value)) {
             return 'Invalid email address';
           }
         },
