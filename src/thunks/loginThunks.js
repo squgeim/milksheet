@@ -1,3 +1,5 @@
+import * as storage from '../utils/storage';
+
 import * as loginActions from '../actions/loginActions';
 import * as userActions from '../actions/userActions';
 
@@ -7,8 +9,13 @@ export function loginUser({ email, password }) {
 
     try {
       const user = await loginService.login(email, password);
+      storage.put('user', user);
       dispatch(userActions.storeUser(user));
     } catch (err) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error(err);
+      }
+
       dispatch(loginActions.loginFailed(err));
     }
 
