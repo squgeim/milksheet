@@ -1,10 +1,16 @@
 import thunk from 'redux-thunk';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 
 import reducer from './reducers';
 
-const services = {};
+import * as loginService from './services/loginService';
 
-const store = createStore(reducer, applyMiddleware(thunk.withExtraArgument(services)));
+const services = { loginService };
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(
+  reducer,
+  composeEnhancers(applyMiddleware(thunk.withExtraArgument(services)))
+);
 
 export default store;

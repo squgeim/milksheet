@@ -1,5 +1,6 @@
-function reducer(state, action) {
-    return state;
-}
+import { combineReducers } from 'redux';
 
-export default reducer;
+import user from './userReducer';
+import login from './loginReducer';
+
+export default combineReducers({ user, login });

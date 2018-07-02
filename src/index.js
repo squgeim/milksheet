@@ -10,9 +10,9 @@ import store from './store';
 import registerServiceWorker from './registerServiceWorker';
 
 const App = () => (
-    <Provider store={store}>
-        <Routes />
-    </Provider>
+  <Provider store={store}>
+    <Routes />
+  </Provider>
 );
 
 ReactDOM.render(<App />, document.getElementById('root'));
