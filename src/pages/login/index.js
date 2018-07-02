@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import Logo from '../../components/Logo';
+import Logo from '../../components/logo';
 
 import * as formUtil from '../../utils/form';
 
