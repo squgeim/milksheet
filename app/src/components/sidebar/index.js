@@ -3,7 +3,11 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Drawer from '@material-ui/core/Drawer';
 import Divider from '@material-ui/core/Divider';
 import Toolbar from '@material-ui/core/Toolbar';
-import Hidden from '@material-ui/core/Hidden';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 
 import Logo from '../logo';
 
@@ -14,6 +18,9 @@ const styles = theme => ({
   logo: {
     margin: 0,
   },
+  active: {
+    background: theme.palette.grey[200],
+  },
   toolbar: theme.mixins.toolbar,
 });
 
@@ -23,6 +30,14 @@ const SidebarContent = ({ classes }) => (
       <Logo className={classes.logo} />
     </Toolbar>
     <Divider />
+    <List>
+      <ListItem button className={classes.active}>
+        <ListItemIcon>
+          <DashboardIcon />
+        </ListItemIcon>
+        <ListItemText primary="Dashboard" />
+      </ListItem>
+    </List>
   </React.Fragment>
 );
 
