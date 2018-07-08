@@ -5,19 +5,19 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/squgeim/milksheet/api/controllers"
-	"github.com/squgeim/milksheet/api/utils"
+	"github.com/squgeim/milksheet/api/controller"
+	"github.com/squgeim/milksheet/api/util"
 )
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	utils.RespondWithJSON(w, 200, map[string]string{
+	util.RespondWithJSON(w, 200, map[string]string{
 		"status": "OK",
 	})
 }
 
 // Handler returns a httpHandler for all the RESTfull API
 func Handler() *mux.Router {
-	authController := controllers.AuthController{}
+	authController := controller.AuthController{}
 
 	r := mux.NewRouter()
 	s := r.PathPrefix("/api").Subrouter()
