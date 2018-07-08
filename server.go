@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/squgeim/milksheet/api"
+	. "github.com/squgeim/milksheet/api/config"
 )
 
 func main() {
@@ -12,5 +13,5 @@ func main() {
 	http.Handle("/", http.FileServer(http.Dir("app/build")))
 
 	log.Println("Listening...")
-	http.ListenAndServe(":3000", nil)
+	http.ListenAndServe(":"+Config.ServerPort, nil)
 }

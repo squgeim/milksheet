@@ -4,6 +4,8 @@ import (
 	"log"
 
 	"gopkg.in/mgo.v2"
+
+	. "github.com/squgeim/milksheet/api/config"
 )
 
 // DB is the mongodb instance used to connect to the database
@@ -18,5 +20,5 @@ func connectDB(server string, database string) {
 }
 
 func init() {
-	connectDB("localhost", "milksheet")
+	connectDB(Config.DatabaseHost, Config.DatabaseName)
 }
