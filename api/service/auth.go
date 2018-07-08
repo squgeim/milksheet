@@ -1,8 +1,6 @@
 package service
 
 import (
-	"log"
-
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/squgeim/milksheet/api/dao"
@@ -20,8 +18,6 @@ func (a *AuthService) LoginUser(email string, password string) (model.User, erro
 	if err != nil {
 		return model.User{}, err
 	}
-
-	log.Println(user, err)
 
 	hashErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 
